@@ -1,23 +1,22 @@
 "use client";
-import { Box, Button, Stack, TextField } from "@mui/material";
+import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useState, useRef, useEffect } from "react";
 
 export default function Home() {
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content: `Hi, I'm the Headstarter Support Agent, how can I assist you today?`,
+      content: `Hi, I'm the "75 Hard Challenge" Support Agent, how can I assist you today?`,
     },
   ]);
 
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-
   const sendMessage = async () => {
     if (!message.trim() || isLoading) return;
-    
-    setIsLoading(true)
+
+    setIsLoading(true);
 
     setMessage("");
     setMessages([
@@ -43,19 +42,19 @@ export default function Home() {
       const decoder = new TextDecoder();
 
       while (true) {
-        const { done, value } = await reader.read()
+        const { done, value } = await reader.read();
 
-        if (done) break
+        if (done) break;
 
-        const text = decoder.decode(value, { stream: true })
-        setMessages( messages => {
-          let lastMessage = messages[messages.length - 1]
-          let otherMessages = messages.slice(0, messages.length - 1)
+        const text = decoder.decode(value, { stream: true });
+        setMessages((messages) => {
+          let lastMessage = messages[messages.length - 1];
+          let otherMessages = messages.slice(0, messages.length - 1);
           return [
             ...otherMessages,
-            {...lastMessage, content: lastMessage.content + text }
-          ]
-        })
+            { ...lastMessage, content: lastMessage.content + text },
+          ];
+        });
       }
     } catch (error) {
       console.log(error);
@@ -69,26 +68,26 @@ export default function Home() {
       ]);
     }
 
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   const handleKeyPress = (event) => {
     if (event.key === "Enter" && !event.shiftkey) {
-      event.preventDefault()
-      sendMessage()
+      event.preventDefault();
+      sendMessage();
     }
-  }
+  };
 
-  const messageEndRef = useRef(null)
+  const messageEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    console.log("Scrolling....")
-    messageEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+    console.log("Scrolling....");
+    messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <Box
@@ -99,13 +98,17 @@ export default function Home() {
       justifyContent="center"
       alignItems="center"
     >
+      <Typography variant="h4" gutterBottom>
+        "75 Hard Challenge" AI Chat Bot 🤖
+      </Typography>
       <Stack
         direction="column"
         width="600px"
         height="700px"
-        border="1px solid black"
         padding={2}
         spacing={3}
+        bgcolor="#f5f5f5"
+        borderRadius={3}
       >
         <Stack
           direction="column"
@@ -147,8 +150,8 @@ export default function Home() {
             onKeyUp={handleKeyPress}
             disabled={isLoading}
           />
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             onClick={sendMessage}
             disabled={isLoading}
           >
