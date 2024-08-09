@@ -14,44 +14,58 @@ export default function Home() {
   const [message, setMessage] = useState("");
 
   const sendMessage = async () => {
-    setMessage("")
+    if (!message.trim()) return;
+
+    setMessage("");
     setMessages([
-      ...messages, 
-      {role: "user", content: message},
-      {role: "assistant", content: ""}
-    ])
+      ...messages,
+      { role: "user", content: message },
+      { role: "assistant", content: "" },
+    ]);
 
-    const response = fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify([...messages, {role: "user", content: message}])
-    }).then( async (res) => {
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify([...messages, { role: "user", content: message }]),
+      });
 
-      let result = ""
-      return reader.read().then(function processText({ done, value }) {
-        if (done) {
-          return result
-        }
-        const text = decoder.decode(value || new Int8Array(), { stream: true })
-        setMessages(messages => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok!");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read()
+
+        if (done) break
+
+        const text = decoder.decode(value, { stream: true })
+        setMessages( messages => {
           let lastMessage = messages[messages.length - 1]
           let otherMessages = messages.slice(0, messages.length - 1)
-          return ([
+          return [
             ...otherMessages,
-            {
-              ...lastMessage,
-              content: lastMessage.content + text
-            }
-          ])
+            {...lastMessage, content: lastMessage.content + text }
+          ]
         })
-        return reader.read().then(processText)
-      })
-    })
-  }
+      }
+    } catch (error) {
+      console.log(error);
+      setMessages([
+        ...messages,
+        {
+          role: "assistant",
+          content:
+            "I'm sorry, but I encountered an error. Please try again later.",
+        },
+      ]);
+    }
+  };
 
   return (
     <Box
@@ -100,16 +114,16 @@ export default function Home() {
             </Box>
           ))}
         </Stack>
-        <Stack
-          direction="row" spacing={2}
-        >
+        <Stack direction="row" spacing={2}>
           <TextField
-            label = "message"
+            label="message"
             fullWidth
             value={message}
-            onChange={e => setMessage(e.target.value)}
+            onChange={(e) => setMessage(e.target.value)}
           />
-          <Button variant="contained" onClick={sendMessage}>Send</Button>
+          <Button variant="contained" onClick={sendMessage}>
+            Send
+          </Button>
         </Stack>
       </Stack>
     </Box>
