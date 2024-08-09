@@ -99,7 +99,7 @@ export default function Home() {
       alignItems="center"
     >
       <Typography variant="h4" gutterBottom>
-        "75 Hard Challenge" AI Chat Bot 🤖
+        75 Hard Challenge AI Chat Bot 🤖
       </Typography>
       <Stack
         direction="column"
