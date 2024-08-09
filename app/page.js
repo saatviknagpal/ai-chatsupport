@@ -12,9 +12,13 @@ export default function Home() {
   ]);
 
   const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const sendMessage = async () => {
-    if (!message.trim()) return;
+    if (!message.trim() || isLoading) return;
+    
+    setIsLoading(true)
 
     setMessage("");
     setMessages([
@@ -65,7 +69,16 @@ export default function Home() {
         },
       ]);
     }
+
+    setIsLoading(false)
   };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter" && !event.shiftkey) {
+      event.preventDefault()
+      sendMessage()
+    }
+  }
 
   return (
     <Box
@@ -120,9 +133,15 @@ export default function Home() {
             fullWidth
             value={message}
             onChange={(e) => setMessage(e.target.value)}
+            onKeyUp={handleKeyPress}
+            disabled={isLoading}
           />
-          <Button variant="contained" onClick={sendMessage}>
-            Send
+          <Button 
+            variant="contained" 
+            onClick={sendMessage}
+            disabled={isLoading}
+          >
+            {isLoading ? "Sending" : "Send"}
           </Button>
         </Stack>
       </Stack>
