@@ -1,4 +1,3 @@
-import { New_Tegomin } from "next/font/google";
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
