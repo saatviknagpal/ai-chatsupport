@@ -1,6 +1,7 @@
 "use client";
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useState, useRef, useEffect } from "react";
+import ReactMarkdown from 'react-markdown';
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -134,8 +135,24 @@ export default function Home() {
                 color="white"
                 borderRadius={5}
                 padding={3}
+                sx={{
+                  '& > div': {
+                    overflow: 'hidden',
+                  },
+                  '& pre': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    padding: '0.5em',
+                    borderRadius: '4px',
+                    overflowX: 'auto',
+                  },
+                  '& code': {
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    padding: '0.2em 0.4em',
+                    borderRadius: '3px',
+                  },
+                }}
               >
-                {message.content}
+                <ReactMarkdown>{message.content}</ReactMarkdown>
               </Box>
             </Box>
           ))}
