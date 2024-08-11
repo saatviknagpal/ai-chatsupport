@@ -2,6 +2,7 @@
 import { Box, Button, Stack, TextField, Typography } from "@mui/material";
 import { useState, useRef, useEffect } from "react";
 import ReactMarkdown from 'react-markdown';
+import Hotjar from '@hotjar/browser';
 
 export default function Home() {
   const [messages, setMessages] = useState([
@@ -73,7 +74,7 @@ export default function Home() {
   };
 
   const handleKeyPress = (event) => {
-    if (event.key === "Enter" && !event.shiftkey) {
+    if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       sendMessage();
     }
@@ -89,6 +90,11 @@ export default function Home() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    const siteId = process.env.NEXT_PUBLIC_HOTJAR_SITE_ID;
+    Hotjar.init(siteId, 6);
+  }, [Hotjar]);
 
   return (
     <Box
